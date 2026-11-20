@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f5f7df" />
+  <title>CAREER COMPASS | 커리어 성향 진단</title>
+  <style>
+    :root {
+      --ink: #303b2b;
+      --muted: #737d68;
+      --line: #e5e9d8;
+      --paper: #fbfcf4;
+      --white: #ffffff;
+      --lemon: #fff2a8;
+      --lemon-deep: #e9d96d;
+      --lime: #e6f2bd;
+      --lime-strong: #829b48;
+      --sage: #dce9c7;
+      --sage-dark: #647d3c;
+      --peach: #f8dfca;
+      --shadow: 0 18px 52px rgba(69, 83, 42, .09);
+      --radius: 26px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 5% 0%, rgba(255,242,168,.48), transparent 25rem),
+        radial-gradient(circle at 100% 20%, rgba(220,233,199,.55), transparent 29rem),
+        var(--paper);
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      letter-spacing: -.025em;
+    }
+    button { font: inherit; }
+    .shell { width: min(960px, calc(100% - 36px)); margin: 0 auto; padding: 30px 0 46px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 22px; }
+    .brand { display: flex; align-items: center; gap: 10px; color: #465637; font-size: 13px; font-weight: 900; letter-spacing: .13em; }
+    .brand-mark { display: grid; place-items: center; width: 35px; height: 35px; border-radius: 12px; color: #566a32; background: var(--lemon); font-size: 17px; font-weight: 900; letter-spacing: 0; box-shadow: inset 0 0 0 1px rgba(114,137,65,.1); }
+    .top-note { color: var(--muted); font-size: 11px; font-weight: 750; letter-spacing: .07em; text-align: right; }
+    .panel { overflow: hidden; border: 1px solid rgba(222,229,207,.95); border-radius: 30px; background: rgba(255,255,255,.94); box-shadow: var(--shadow); }
+    .hero { position: relative; overflow: hidden; padding: 64px 68px 58px; background: linear-gradient(118deg, #fff4b9 0%, #f3f6d4 53%, #e2efc8 100%); isolation: isolate; }
+    .hero::before, .hero::after { position: absolute; content: ""; z-index: -1; border-radius: 50%; background: rgba(255,255,255,.3); }
+    .hero::before { width: 360px; height: 360px; right: -70px; top: -210px; }
+    .hero::after { width: 230px; height: 230px; right: 110px; top: -130px; background: rgba(255,255,255,.22); }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 19px; color: #718445; font-size: 11px; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
+    .eyebrow::before { width: 22px; height: 2px; content: ""; border-radius: 5px; background: #93a85d; }
+    h1 { max-width: 620px; margin: 0; color: #34432b; font-size: clamp(35px, 5.8vw, 56px); line-height: 1.15; letter-spacing: -.07em; font-weight: 900; word-break: keep-all; }
+    .hero-copy { max-width: 570px; margin: 18px 0 0; color: #647153; font-size: 15px; line-height: 1.8; word-break: keep-all; }
+    .hero-bottom { display: flex; align-items: center; gap: 22px; margin-top: 34px; }
+    .primary-btn { min-height: 52px; padding: 0 24px; border: 0; border-radius: 15px; color: #34432b; background: #d8e9a9; font-weight: 900; cursor: pointer; box-shadow: 0 7px 18px rgba(100,125,60,.12); transition: transform .18s, box-shadow .18s, background .18s; }
+    .primary-btn:hover { transform: translateY(-2px); background: #cfe29a; box-shadow: 0 10px 22px rgba(100,125,60,.18); }
+    .hero-meta { color: #788365; font-size: 12px; line-height: 1.7; }
+    .intro-content { padding: 32px 68px 40px; }
+    .intro-label { margin: 0 0 15px; color: #8b966f; font-size: 10px; font-weight: 900; letter-spacing: .16em; }
+    .axis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+    .axis-card { display: flex; gap: 13px; align-items: flex-start; min-height: 102px; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: #fffef8; }
+    .axis-no { display: grid; flex: 0 0 31px; place-items: center; width: 31px; height: 31px; border-radius: 11px; color: #63793e; background: var(--lime); font-size: 11px; font-weight: 900; }
+    .axis-card strong { display: block; margin: 1px 0 7px; color: #435238; font-size: 14px; }
+    .axis-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; word-break: keep-all; }
+    .quiz-wrap { padding: 36px 68px 46px; }
+    .quiz-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .step-label { color: #87916f; font-size: 11px; font-weight: 900; letter-spacing: .08em; }
+    .step-label b { color: #4a5d34; }
+    .progress-track { width: 100%; height: 8px; overflow: hidden; border-radius: 99px; background: #f0f2e7; }
+    .progress-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #e4d86f, #a9c875); transition: width .25s ease; }
+    .question-area { padding: 39px 0 25px; }
+    .question-kicker { margin: 0 0 12px; color: #879d50; font-size: 10px; font-weight: 900; letter-spacing: .14em; }
+    .question-title { max-width: 690px; min-height: 74px; margin: 0; color: #3c4a32; font-size: clamp(23px, 3.4vw, 31px); line-height: 1.4; letter-spacing: -.05em; word-break: keep-all; }
+    .question-hint { margin: 11px 0 0; color: var(--muted); font-size: 13px; }
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .choice { position: relative; display: flex; min-height: 148px; flex-direction: column; align-items: flex-start; padding: 21px 22px; border: 1.5px solid var(--line); border-radius: 19px; text-align: left; background: #fffef9; cursor: pointer; transition: .18s ease; }
+    .choice:hover { border-color: #b5c58c; transform: translateY(-2px); }
+    .choice.selected { border-color: #91a95a; background: #f5f9e9; box-shadow: 0 0 0 3px rgba(145,169,90,.11); }
+    .choice-tag { margin-bottom: 19px; color: #9aa286; font-size: 10px; font-weight: 900; letter-spacing: .13em; }
+    .choice strong { max-width: 360px; color: #435238; font-size: 15px; line-height: 1.55; word-break: keep-all; }
+    .choice small { margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.55; word-break: keep-all; }
+    .choice-check { position: absolute; top: 16px; right: 16px; display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid #e0e5d3; border-radius: 50%; color: transparent; font-size: 11px; }
+    .choice.selected .choice-check { border-color: #829b48; color: #fff; background: #829b48; }
+    .quiz-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; }
+    .text-btn { padding: 12px 2px; border: 0; color: var(--muted); background: transparent; font-size: 13px; font-weight: 800; cursor: pointer; }
+    .text-btn:disabled { opacity: .35; cursor: not-allowed; }
+    .next-btn { min-width: 145px; min-height: 48px; padding: 0 20px; border: 0; border-radius: 14px; color: #fff; background: #718746; font-size: 13px; font-weight: 850; cursor: pointer; transition: .18s; }
+    .next-btn:hover:not(:disabled) { background: #60763a; transform: translateY(-1px); }
+    .next-btn:disabled { opacity: .3; cursor: not-allowed; }
+    .result-wrap { padding: 42px 68px 50px; }
+    .result-overline { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #879d50; font-size: 10px; font-weight: 900; letter-spacing: .15em; }
+    .result-code { padding: 8px 11px; border-radius: 10px; color: #687d40; background: #f0f5df; font-size: 11px; letter-spacing: .08em; }
+    .result-identity { display: flex; align-items: center; gap: 19px; margin-top: 25px; }
+    .result-avatar { display: grid; flex: 0 0 86px; place-items: center; width: 86px; height: 86px; border: 1px solid #e8edda; border-radius: 27px; background: linear-gradient(145deg, #fff5bd, #e7f1c9); font-size: 42px; }
+    .result-heading { margin: 0; color: #35442d; font-size: clamp(29px, 4.7vw, 43px); line-height: 1.2; letter-spacing: -.065em; }
+    .result-type { display: inline-block; margin-top: 8px; padding: 5px 9px; border-radius: 8px; color: #6c8244; background: #f2f6e6; font-size: 11px; font-weight: 850; }
+    .result-subtitle { margin: 19px 0 0; color: #657d3d; font-size: 17px; font-weight: 800; word-break: keep-all; }
+    .result-description { max-width: 690px; margin: 12px 0 0; color: var(--muted); font-size: 14px; line-height: 1.85; word-break: keep-all; }
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 30px; }
+    .result-card { padding: 21px; border: 1px solid var(--line); border-radius: 19px; background: #fffef9; }
+    .result-card h3 { margin: 0 0 17px; color: #46563a; font-size: 13px; letter-spacing: -.02em; }
+    .meter-row { margin-top: 14px; }
+    .meter-head { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 7px; color: var(--muted); font-size: 11px; font-weight: 750; }
+    .meter-head b { color: #46563a; font-variant-numeric: tabular-nums; }
+    .meter-track { height: 7px; overflow: hidden; border-radius: 20px; background: #f0f2e8; }
+    .meter-fill { height: 100%; border-radius: inherit; background: #a5bd6d; }
+    .meter-fill.alt { background: #e4d47a; }
+    .chip-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { padding: 8px 11px; border: 1px solid #e5e9d8; border-radius: 99px; color: #59694a; background: #f8faef; font-size: 11px; font-weight: 800; }
+    .career-chip { border-color: #e7e4bf; color: #65743e; background: #fff9dc; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+    .detail-card { padding: 21px; border-radius: 18px; background: #f5f8ed; }
+    .detail-card h3 { margin: 0 0 11px; color: #46563a; font-size: 13px; }
+    .detail-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.8; word-break: keep-all; }
+    .saved-note { margin: 17px 0 0; color: #8a956f; font-size: 11px; }
+    .disclaimer { margin: 22px 0 0; padding: 14px 16px; border-left: 3px solid #e3d57b; border-radius: 0 10px 10px 0; color: #78816b; background: #fffdf1; font-size: 11px; line-height: 1.7; word-break: keep-all; }
+    .result-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
+    .secondary-btn { min-height: 48px; padding: 0 18px; border: 1px solid #e1e7d5; border-radius: 14px; color: #50613d; background: #fff; font-size: 13px; font-weight: 850; cursor: pointer; }
+    .secondary-btn:hover { border-color: #b8c79a; background: #fbfdf5; }
+    .footer { display: flex; justify-content: space-between; gap: 15px; margin-top: 19px; color: #9aa28b; font-size: 10px; letter-spacing: .035em; }
+    [hidden] { display: none !important; }
+
+    @media (max-width: 650px) {
+      .shell { width: min(100% - 20px, 540px); padding: 17px 0 28px; }
+      .topbar { margin: 0 4px 15px; }
+      .top-note { max-width: 130px; font-size: 9px; line-height: 1.4; }
+      .panel { border-radius: 23px; }
+      .hero { padding: 42px 24px 37px; }
+      .hero-copy { font-size: 13px; }
+      .hero-bottom { align-items: flex-start; flex-direction: column; gap: 11px; margin-top: 26px; }
+      .intro-content, .quiz-wrap, .result-wrap { padding: 27px 21px 31px; }
+      .axis-grid, .choices, .result-grid, .detail-grid { grid-template-columns: 1fr; }
+      .axis-card { min-height: 0; }
+      .question-area { padding: 31px 0 22px; }
+      .question-title { min-height: 0; font-size: 24px; }
+      .choice { min-height: 120px; padding: 19px; }
+      .choice-tag { margin-bottom: 13px; }
+      .result-identity { gap: 13px; }
+      .result-avatar { flex-basis: 68px; width: 68px; height: 68px; border-radius: 22px; font-size: 34px; }
+      .result-heading { font-size: 30px; }
+      .result-actions { flex-direction: column; }
+      .result-actions button { width: 100%; }
+      .footer { flex-direction: column; gap: 5px; }
+    }
+    @media (min-width: 651px) {
+      .choices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+    @page { size: A4; margin: 15mm; }
+    @media print {
+      body { background: #fff !important; color: #222 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .shell { width: 100%; padding: 0; }
+      .topbar, #introScreen, #quizScreen, .footer, .result-actions { display: none !important; }
+      #resultScreen { display: block !important; overflow: visible; border: 0; border-radius: 0; box-shadow: none; }
+      .result-wrap { padding: 0; }
+      .result-grid, .detail-grid { break-inside: avoid; }
+      .result-card, .detail-card { break-inside: avoid; }
+      .result-heading { font-size: 34px; }
+      .result-description, .detail-card p { color: #4c5544; }
+      .disclaimer { color: #52594a; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">C</span><span>CAREER COMPASS</span></div>
+      <div class="top-note">CAREER STYLE TEST · 10 QUESTIONS</div>
+    </header>
+
+    <section class="panel" id="introScreen">
+      <div class="hero">
+        <div class="eyebrow">Find your work style</div>
+        <h1>나에게 맞는<br />일의 방식은?</h1>
+        <p class="hero-copy">나를 움직이게 하는 업무 환경과 강점을 발견해 보세요. 10개의 질문으로 나만의 커리어 캐릭터를 확인합니다.</p>
+        <div class="hero-bottom">
+          <button class="primary-btn" id="startBtn">진단 시작하기 <span aria-hidden="true">→</span></button>
+          <div class="hero-meta">약 2분 소요<br />총 10문항 · 4가지 커리어 페르소나</div>
+        </div>
+      </div>
+      <div class="intro-content">
+        <p class="intro-label">TWO DIMENSIONS</p>
+        <div class="axis-grid">
+          <div class="axis-card"><span class="axis-no">01</span><div><strong>관계 중심 ↔ 과업 중심</strong><p>사람과의 소통·협업을 우선하는지, 정보와 문제를 분석하는 데 집중하는지 살펴봅니다.</p></div></div>
+          <div class="axis-card"><span class="axis-no">02</span><div><strong>안정·체계 ↔ 변화·도전</strong><p>명확한 기준과 계획을 선호하는지, 새로운 시도와 빠른 변화를 선호하는지 살펴봅니다.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="quizScreen" hidden>
+      <div class="quiz-wrap">
+        <div class="quiz-top"><span class="step-label">QUESTION <b id="currentNumber">01</b> / 10</span><span class="step-label" id="progressPercent">10%</span></div>
+        <div class="progress-track" role="progressbar" aria-label="진단 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="10" id="progressBar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+        <div class="question-area">
+          <p class="question-kicker" id="questionKicker">WORK STYLE</p>
+          <h2 class="question-title" id="questionTitle"></h2>
+          <p class="question-hint">둘 중 나에게 조금 더 가까운 쪽을 선택하세요.</p>
+        </div>
+        <div class="choices" id="choices"></div>
+        <div class="quiz-actions">
+          <button class="text-btn" id="prevBtn">← 이전 문항</button>
+          <button class="next-btn" id="nextBtn" disabled>다음 문항 →</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="resultScreen" hidden>
+      <div class="result-wrap">
+        <div class="result-overline"><span>YOUR CAREER PROFILE</span><span class="result-code" id="resultCode">P / S</span></div>
+        <div class="result-identity">
+          <div class="result-avatar" id="resultAvatar" aria-hidden="true">🌱</div>
+          <div>
+            <h2 class="result-heading" id="resultName"></h2>
+            <span class="result-type" id="resultType"></span>
+          </div>
+        </div>
+        <p class="result-subtitle" id="resultSubtitle"></p>
+        <p class="result-description" id="resultDescription"></p>
+        <div class="result-grid">
+          <div class="result-card">
+            <h3>나의 성향 지표</h3>
+            <div id="meters"></div>
+          </div>
+          <div class="result-card">
+            <h3>강점 키워드</h3>
+            <div class="chip-list" id="strengths"></div>
+            <h3 style="margin-top:24px">추천 직무 3가지</h3>
+            <div class="chip-list" id="careers"></div>
+          </div>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-card"><h3>일할 때 발휘되는 강점</h3><p id="workStrength"></p></div>
+          <div class="detail-card"><h3>함께 점검하면 좋은 점</h3><p id="caution"></p></div>
+        </div>
+        <p class="saved-note" id="savedNote" aria-live="polite"></p>
+        <p class="disclaimer">이 결과는 자기이해를 돕기 위한 간단한 성향 참고 자료입니다. 실제 직무 적합성은 역량, 경험, 가치관, 조직 환경 등에 따라 달라지며 특정 직업이나 채용 결과를 예측하지 않습니다.</p>
+        <div class="result-actions">
+          <button class="primary-btn" id="retryBtn">다시 진단하기 ↻</button>
+          <button class="secondary-btn" id="pdfBtn">PDF로 저장 ↓</button>
+          <button class="secondary-btn" id="copyBtn">결과 요약 복사하기</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer"><span>CAREER COMPASS · SELF-REFLECTION TOOL</span><span>정답은 없습니다. 현재의 나와 가까운 선택을 해보세요.</span></footer>
+  </main>
+
+  <script>
+    'use strict';
+    const STORAGE_KEY = 'careerCompass.lastResult.v1';
+    const questions = [
+      { axis: 'RELATIONSHIP / TASK', title: '새로운 팀 프로젝트를 시작할 때, 가장 먼저 하는 행동은?', a: ['팀원들과 대화하며 각자의 생각과 필요를 파악한다', '목표와 자료를 살펴보고 해결해야 할 문제를 정리한다'], ad: '사람들의 관점과 협업 방식을 먼저 이해한다', bd: '과제의 구조와 핵심 쟁점을 먼저 파악한다' },
+      { axis: 'RELATIONSHIP / TASK', title: '일을 잘 마쳤다고 느끼는 순간은 언제인가요?', a: ['함께한 사람들의 만족과 신뢰를 얻었을 때', '분석한 내용이 정확한 결과나 성과로 이어졌을 때'], ad: '관계와 소통에서 성취감을 느낀다', bd: '정확한 결과와 문제 해결에서 성취감을 느낀다' },
+      { axis: 'RELATIONSHIP / TASK', title: '의견이 다른 사람과 협업해야 한다면?', a: ['서로의 입장을 듣고 공통점을 찾아 합의점을 만든다', '근거와 기준을 정리해 가장 타당한 대안을 찾는다'], ad: '대화와 조율을 통해 해결한다', bd: '논리와 근거를 통해 해결한다' },
+      { axis: 'RELATIONSHIP / TASK', title: '새로운 분야를 배울 때 더 자연스러운 방법은?', a: ['경험자의 이야기를 듣고 사례와 경험을 나눈다', '자료·수치·원리를 찾아 스스로 구조화한다'], ad: '사람과 사례를 통해 맥락을 이해한다', bd: '정보와 원리를 분석해 체계적으로 이해한다' },
+      { axis: 'RELATIONSHIP / TASK', title: '내가 맡은 업무에서 특히 중요하게 생각하는 것은?', a: ['상대방의 요구를 파악하고 원활한 관계를 유지하는 것', '업무의 정확도와 완성도를 높이는 것'], ad: '상대의 경험과 관계의 질을 중시한다', bd: '결과물의 품질과 정확성을 중시한다' },
+      { axis: 'STABILITY / CHANGE', title: '업무를 맡았을 때 더 편안한 상황은?', a: ['역할과 절차, 기대 결과가 명확하게 정해져 있다', '목표만 주어지고 방법은 자유롭게 정할 수 있다'], ad: '기준이 분명할수록 역량을 발휘한다', bd: '자율성이 클수록 역량을 발휘한다' },
+      { axis: 'STABILITY / CHANGE', title: '새로운 업무를 진행할 때 나의 방식은?', a: ['계획과 순서를 세우고 단계별로 실행한다', '작게 시도한 뒤 결과를 보며 빠르게 수정한다'], ad: '계획과 절차를 통해 안정적으로 진행한다', bd: '실험과 피드백을 통해 방향을 구체화한다' },
+      { axis: 'STABILITY / CHANGE', title: '예상하지 못한 변화가 생기면?', a: ['우선순위를 다시 정리하고 기존 계획을 조정한다', '새로운 가능성이 생겼다고 생각하고 방법을 바꿔본다'], ad: '변화를 구조화해 통제 가능한 상태로 만든다', bd: '변화를 기회로 보고 적극적으로 활용한다' },
+      { axis: 'STABILITY / CHANGE', title: '더 선호하는 업무 환경은?', a: ['업무 기준과 일정이 안정적이고 예측 가능하다', '새로운 과제가 자주 생기고 변화의 속도가 빠르다'], ad: '지속성과 예측 가능성을 중시한다', bd: '다양성과 변화의 속도를 중시한다' },
+      { axis: 'STABILITY / CHANGE', title: '처음 접하는 과제를 받았을 때?', a: ['관련 지침과 이전 사례를 충분히 확인한 후 시작한다', '우선 실행 가능한 시안을 만들고 시행착오를 거친다'], ad: '검토와 준비를 충분히 한 뒤 실행한다', bd: '실행하면서 학습하고 개선한다' }
+    ];
+
+    const profiles = {
+      PS: {
+        code: 'P / S', name: '온기 가득 조율이', type: '관계협력형 · 팀의 든든한 가드너', avatar: '🌼',
+        subtitle: '사람과 조직을 안정적으로 연결하는 조율자',
+        description: '주변 사람의 표정과 요구를 세심하게 살피고, 서로 편하게 협력할 수 있는 환경을 만드는 타입입니다. 앞에서 강하게 이끌기보다 구성원이 제 역할을 잘하도록 돕고, 작은 약속을 꾸준히 지키며 신뢰를 쌓습니다.',
+        strengths: ['경청과 조율', '관계 형성', '운영 안정화', '협업 지원'],
+        careers: ['인사·교육 운영', '고객경험(CX) 관리', '금융소비자보호'],
+        workStrength: '여러 사람의 요구를 파악하고 서로 다른 의견을 조정하는 역할에서 강점을 발휘할 수 있습니다. 반복적인 운영 업무도 책임감 있게 관리하며 팀의 안정성을 높이는 데 기여할 수 있습니다.',
+        caution: '모두의 의견을 반영하려다 의사결정이 늦어질 수 있습니다. 우선순위를 정하고, 필요한 경우 자신의 판단을 명확하게 전달하는 연습이 도움이 됩니다.'
+      },
+      PC: {
+        code: 'P / C', name: '기회를 잇는 탐험가', type: '관계확장형 · 새로운 연결의 브릿저', avatar: '🦋',
+        subtitle: '사람을 설득하고 새로운 가능성을 발견하는 개척자',
+        description: '사람들의 반응과 시장의 변화를 빠르게 읽고, 대화와 연결을 통해 새로운 기회를 찾아내는 타입입니다. 낯선 사람이나 새로운 환경을 만나는 데 비교적 열려 있으며, 변화를 관계 확장과 성과 창출의 기회로 활용합니다.',
+        strengths: ['커뮤니케이션', '설득과 협상', '기회 발굴', '빠른 적응'],
+        careers: ['기업금융 RM', '사업개발·전략 제휴', '금융상품 영업·마케팅'],
+        workStrength: '고객이나 파트너의 요구를 파악하고 관계를 발전시키는 역할에서 강점을 발휘할 수 있습니다. 정해진 답이 없는 과제에서도 다양한 사람과 소통하며 실행 기회를 찾을 수 있습니다.',
+        caution: '새로운 관계와 기회를 넓히는 데 집중하다 보면 세부 일정이나 후속 관리가 느슨해질 수 있습니다. 실행 이후의 점검 기준과 마감 일정을 함께 관리하면 도움이 됩니다.'
+      },
+      TS: {
+        code: 'T / S', name: '빈틈없는 설계자', type: '분석관리형 · 기준을 세우는 아키텍트', avatar: '🧩',
+        subtitle: '근거와 기준으로 안정적인 결과를 만드는 분석가',
+        description: '흩어진 정보를 차근차근 정리하고, 객관적인 기준을 바탕으로 정확한 답을 찾아가는 타입입니다. 눈에 띄는 변화보다 지속 가능한 시스템과 완성도를 중요하게 생각하며, 오류나 위험 요소를 사전에 발견하는 데 강점을 보입니다.',
+        strengths: ['논리적 분석', '정확성과 꼼꼼함', '리스크 점검', '체계적 관리'],
+        careers: ['재무·회계 관리', '리스크관리', '여신심사·신용분석'],
+        workStrength: '복잡한 정보를 체계적으로 정리하고 오류나 위험 요인을 사전에 발견하는 역할에서 강점을 발휘할 수 있습니다. 기준과 절차가 중요한 업무에서 신뢰도 높은 결과를 만드는 데 기여할 수 있습니다.',
+        caution: '충분한 검토를 중시하다 보면 실행이나 의사결정이 늦어질 수 있습니다. 핵심 기준을 충족했다면 일정 수준의 불확실성을 감수하고 다음 단계로 넘어가는 유연성이 도움이 됩니다.'
+      },
+      TC: {
+        code: 'T / C', name: '변화를 만드는 실험가', type: '전략실험형 · 해법을 찾는 이노베이터', avatar: '🚀',
+        subtitle: '문제를 새롭게 정의하고 빠르게 검증하는 전략가',
+        description: '복잡한 문제에서 핵심 변수를 찾아내고, 가설을 세워 직접 실험하며 해답을 구하는 타입입니다. 기존 방식에 의문을 던지고 기술과 데이터를 활용해 더 나은 방법을 찾는 과정에서 동기를 얻습니다.',
+        strengths: ['문제 정의', '가설 수립·검증', '데이터 활용', '변화 대응'],
+        careers: ['디지털 금융 서비스 기획', '금융 데이터 분석', 'AI·핀테크 프로덕트 기획'],
+        workStrength: '문제를 여러 관점에서 분석하고 실행 가능한 대안을 빠르게 시험하는 역할에서 강점을 발휘할 수 있습니다. 디지털 전환이나 신규 서비스처럼 변화가 많은 과제에 적합한 업무 방식을 보일 수 있습니다.',
+        caution: '새로운 시도에 관심이 분산되어 마무리나 관계자 공유가 부족해질 수 있습니다. 실험의 목표·기한·성공 기준을 명확히 하고 결과를 문서화하면 실행력을 높일 수 있습니다.'
+      }
+    };
+
+    let current = 0;
+    let answers = Array(questions.length).fill(null);
+    const $ = (id) => document.getElementById(id);
+    const introScreen = $('introScreen');
+    const quizScreen = $('quizScreen');
+    const resultScreen = $('resultScreen');
+
+    function showScreen(screen) {
+      [introScreen, quizScreen, resultScreen].forEach(el => el.hidden = el !== screen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function renderQuestion() {
+      const q = questions[current];
+      const selected = answers[current];
+      const progress = ((current + 1) / questions.length) * 100;
+      $('currentNumber').textContent = String(current + 1).padStart(2, '0');
+      $('progressPercent').textContent = `${Math.round(progress)}%`;
+      $('progressFill').style.width = `${progress}%`;
+      $('progressBar').setAttribute('aria-valuenow', String(Math.round(progress)));
+      $('questionKicker').textContent = q.axis;
+      $('questionTitle').textContent = q.title;
+      $('choices').innerHTML = '';
+      [0, 1].forEach(index => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `choice${selected === index ? ' selected' : ''}`;
+        button.setAttribute('aria-pressed', selected === index ? 'true' : 'false');
+        const tag = document.createElement('span'); tag.className = 'choice-tag'; tag.textContent = `OPTION 0${index + 1}`;
+        const title = document.createElement('strong'); title.textContent = q.a[index];
+        const desc = document.createElement('small'); desc.textContent = index === 0 ? q.ad : q.bd;
+        const check = document.createElement('span'); check.className = 'choice-check'; check.textContent = '✓';
+        button.append(tag, title, desc, check);
+        button.addEventListener('click', () => { answers[current] = index; renderQuestion(); });
+        $('choices').appendChild(button);
+      });
+      $('prevBtn').disabled = current === 0;
+      $('nextBtn').disabled = selected === null;
+      $('nextBtn').textContent = current === questions.length - 1 ? '결과 확인하기 →' : '다음 문항 →';
+    }
+    function calculateResult() {
+      const people = answers.slice(0, 5).filter(v => v === 0).length;
+      const stable = answers.slice(5, 10).filter(v => v === 0).length;
+      const key = `${people >= 3 ? 'P' : 'T'}${stable >= 3 ? 'S' : 'C'}`;
+      return { key, people, task: 5 - people, stable, change: 5 - stable };
+    }
+    function addMeter(container, label, score, alt = false) {
+      const row = document.createElement('div'); row.className = 'meter-row';
+      const head = document.createElement('div'); head.className = 'meter-head';
+      const name = document.createElement('span'); name.textContent = label;
+      const value = document.createElement('b'); value.textContent = `${score}/5 · ${score * 20}%`;
+      head.append(name, value);
+      const track = document.createElement('div'); track.className = 'meter-track';
+      const fill = document.createElement('div'); fill.className = `meter-fill${alt ? ' alt' : ''}`; fill.style.width = `${score * 20}%`;
+      track.appendChild(fill); row.append(head, track); container.appendChild(row);
+    }
+    function saveResult(payload) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        return true;
+      } catch (error) {
+        console.warn('결과를 로컬 스토리지에 저장하지 못했습니다.', error);
+        return false;
+      }
+    }
+    function renderResult(payload, isRestored = false) {
+      const scores = payload.scores;
+      const profile = profiles[scores.key];
+      if (!profile) return showScreen(introScreen);
+      $('resultCode').textContent = profile.code;
+      $('resultAvatar').textContent = profile.avatar;
+      $('resultName').textContent = profile.name;
+      $('resultType').textContent = profile.type;
+      $('resultSubtitle').textContent = profile.subtitle;
+      $('resultDescription').textContent = profile.description;
+      $('meters').innerHTML = '';
+      addMeter($('meters'), '관계 중심', scores.people);
+      addMeter($('meters'), '과업 중심', scores.task, true);
+      addMeter($('meters'), '안정·체계', scores.stable);
+      addMeter($('meters'), '변화·도전', scores.change, true);
+      $('strengths').innerHTML = '';
+      profile.strengths.forEach(item => { const span = document.createElement('span'); span.className = 'chip'; span.textContent = item; $('strengths').appendChild(span); });
+      $('careers').innerHTML = '';
+      profile.careers.forEach(item => { const span = document.createElement('span'); span.className = 'chip career-chip'; span.textContent = item; $('careers').appendChild(span); });
+      $('workStrength').textContent = profile.workStrength;
+      $('caution').textContent = profile.caution;
+      const dateText = payload.savedAt ? new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(payload.savedAt)) : '';
+      $('savedNote').textContent = isRestored ? `이전에 완료한 진단 결과입니다 · 저장 시각 ${dateText}` : `결과가 이 브라우저에 저장되었습니다 · ${dateText}`;
+      showScreen(resultScreen);
+    }
+    function finishTest() {
+      const payload = { scores: calculateResult(), answers: [...answers], savedAt: new Date().toISOString() };
+      const saved = saveResult(payload);
+      renderResult(payload, false);
+      if (!saved) $('savedNote').textContent = '결과를 화면에 표시했습니다. 다만 브라우저 저장 기능이 제한되어 다시 열었을 때 결과가 유지되지 않을 수 있습니다.';
+    }
+    function loadSavedResult() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return false;
+        const payload = JSON.parse(raw);
+        const score = payload && payload.scores;
+        const valid = score && profiles[score.key] && ['people', 'task', 'stable', 'change'].every(k => Number.isInteger(score[k]) && score[k] >= 0 && score[k] <= 5);
+        if (!valid) { localStorage.removeItem(STORAGE_KEY); return false; }
+        renderResult(payload, true);
+        return true;
+      } catch (error) {
+        console.warn('저장된 결과를 불러오지 못했습니다.', error);
+        return false;
+      }
+    }
+    function makeSummary() {
+      let stored = null;
+      try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (error) { /* 저장소 접근이 제한된 경우 현재 진단 점수를 사용 */ }
+      const scores = stored && stored.scores ? stored.scores : calculateResult();
+      const p = profiles[scores.key];
+      return `CAREER COMPASS 결과\n페르소나: ${p.name}\n유형: ${p.type} (${p.code})\n${p.subtitle}\n강점: ${p.strengths.join(', ')}\n추천 직무: ${p.careers.join(', ')}\n\n이 결과는 자기이해를 위한 참고 자료이며 실제 직무 적합성이나 채용 결과를 예측하지 않습니다.`;
+    }
+
+    $('startBtn').addEventListener('click', () => {
+      current = 0;
+      answers = Array(questions.length).fill(null);
+      try { localStorage.removeItem(STORAGE_KEY); } catch (error) { /* 저장소 접근이 제한된 환경에서는 진단만 진행 */ }
+      showScreen(quizScreen);
+      renderQuestion();
+    });
+    $('prevBtn').addEventListener('click', () => { if (current > 0) { current--; renderQuestion(); } });
+    $('nextBtn').addEventListener('click', () => {
+      if (answers[current] === null) return;
+      if (current < questions.length - 1) { current++; renderQuestion(); }
+      else finishTest();
+    });
+    $('retryBtn').addEventListener('click', () => {
+      current = 0;
+      answers = Array(questions.length).fill(null);
+      try { localStorage.removeItem(STORAGE_KEY); } catch (error) { /* 무시 */ }
+      showScreen(introScreen);
+    });
+    $('pdfBtn').addEventListener('click', () => window.print());
+    $('copyBtn').addEventListener('click', async () => {
+      const summary = makeSummary();
+      const button = $('copyBtn');
+      try {
+        await navigator.clipboard.writeText(summary);
+        button.textContent = '복사 완료 ✓';
+        setTimeout(() => button.textContent = '결과 요약 복사하기', 1800);
+      } catch (error) {
+        const area = document.createElement('textarea'); area.value = summary; document.body.appendChild(area); area.select();
+        const copied = document.execCommand('copy'); area.remove();
+        button.textContent = copied ? '복사 완료 ✓' : '복사할 수 없습니다';
+        setTimeout(() => button.textContent = '결과 요약 복사하기', 1800);
+      }
+    });
+
+    if (!loadSavedResult()) showScreen(introScreen);
+  </script>
+</body>
+</html>
