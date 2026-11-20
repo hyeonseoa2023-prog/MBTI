@@ -113,6 +113,14 @@
     .detail-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.8; word-break: keep-all; }
     .saved-note { margin: 17px 0 0; color: #8a956f; font-size: 11px; }
     .disclaimer { margin: 22px 0 0; padding: 14px 16px; border-left: 3px solid #e3d57b; border-radius: 0 10px 10px 0; color: #78816b; background: #fffdf1; font-size: 11px; line-height: 1.7; word-break: keep-all; }
+    .answer-review { margin-top: 18px; }
+    .answer-review-panel { margin-top: 12px; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: #fffef9; }
+    .answer-review-panel h3 { margin: 0 0 13px; color: #46563a; font-size: 13px; }
+    .answer-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .answer-item { padding: 13px; border-radius: 13px; background: #f7f9ef; }
+    .answer-item strong { display: block; margin-bottom: 7px; color: #75834f; font-size: 10px; letter-spacing: .04em; }
+    .answer-item p { margin: 0; color: #4e5b43; font-size: 12px; line-height: 1.65; word-break: keep-all; }
+    .answer-item span { display: inline-block; margin-top: 8px; padding: 4px 8px; border-radius: 7px; color: #637a3d; background: #eaf1d9; font-size: 10px; font-weight: 850; }
     .result-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
     .secondary-btn { min-height: 48px; padding: 0 18px; border: 1px solid #e1e7d5; border-radius: 14px; color: #50613d; background: #fff; font-size: 13px; font-weight: 850; cursor: pointer; }
     .secondary-btn:hover { border-color: #b8c79a; background: #fbfdf5; }
@@ -137,6 +145,7 @@
       .result-identity { gap: 13px; }
       .result-avatar { flex-basis: 68px; width: 68px; height: 68px; border-radius: 22px; font-size: 34px; }
       .result-heading { font-size: 30px; }
+      .answer-list { grid-template-columns: 1fr; }
       .result-actions { flex-direction: column; }
       .result-actions button { width: 100%; }
       .footer { flex-direction: column; gap: 5px; }
@@ -234,6 +243,13 @@
           <div class="detail-card"><h3>함께 점검하면 좋은 점</h3><p id="caution"></p></div>
         </div>
         <p class="saved-note" id="savedNote" aria-live="polite"></p>
+        <div class="answer-review">
+          <button class="secondary-btn" id="reviewAnswersBtn" type="button" aria-expanded="false" aria-controls="answerReviewPanel">문항별 선택 답변 확인하기 ＋</button>
+          <div class="answer-review-panel" id="answerReviewPanel" hidden>
+            <h3>내가 선택한 답변 · 10문항</h3>
+            <div class="answer-list" id="answerList"></div>
+          </div>
+        </div>
         <p class="disclaimer">이 결과는 자기이해를 돕기 위한 간단한 성향 참고 자료입니다. 실제 직무 적합성은 역량, 경험, 가치관, 조직 환경 등에 따라 달라지며 특정 직업이나 채용 결과를 예측하지 않습니다.</p>
         <div class="result-actions">
           <button class="primary-btn" id="retryBtn">다시 진단하기 ↻</button>
@@ -386,9 +402,28 @@
       profile.careers.forEach(item => { const span = document.createElement('span'); span.className = 'chip career-chip'; span.textContent = item; $('careers').appendChild(span); });
       $('workStrength').textContent = profile.workStrength;
       $('caution').textContent = profile.caution;
+      renderAnswerReview(payload.answers);
       const dateText = payload.savedAt ? new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(payload.savedAt)) : '';
       $('savedNote').textContent = isRestored ? `이전에 완료한 진단 결과입니다 · 저장 시각 ${dateText}` : `결과가 이 브라우저에 저장되었습니다 · ${dateText}`;
       showScreen(resultScreen);
+    }
+    function renderAnswerReview(savedAnswers) {
+      const list = $('answerList');
+      list.innerHTML = '';
+      const validAnswers = Array.isArray(savedAnswers) ? savedAnswers : [];
+      questions.forEach((q, i) => {
+        const choice = validAnswers[i];
+        const item = document.createElement('div');
+        item.className = 'answer-item';
+        const number = document.createElement('strong');
+        number.textContent = `QUESTION ${String(i + 1).padStart(2, '0')}`;
+        const question = document.createElement('p');
+        question.textContent = q.title;
+        const answer = document.createElement('span');
+        answer.textContent = choice === 0 || choice === 1 ? `선택 ${choice + 1} · ${q.a[choice]}` : '선택 기록 없음';
+        item.append(number, question, answer);
+        list.appendChild(item);
+      });
     }
     function finishTest() {
       const payload = { scores: calculateResult(), answers: [...answers], savedAt: new Date().toISOString() };
@@ -439,6 +474,14 @@
       showScreen(introScreen);
     });
     $('pdfBtn').addEventListener('click', () => window.print());
+    $('reviewAnswersBtn').addEventListener('click', () => {
+      const panel = $('answerReviewPanel');
+      const opening = panel.hidden;
+      panel.hidden = !opening;
+      $('reviewAnswersBtn').setAttribute('aria-expanded', String(opening));
+      $('reviewAnswersBtn').textContent = opening ? '문항별 선택 답변 접기 −' : '문항별 선택 답변 확인하기 ＋';
+      if (opening) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
     $('copyBtn').addEventListener('click', async () => {
       const summary = makeSummary();
       const button = $('copyBtn');
